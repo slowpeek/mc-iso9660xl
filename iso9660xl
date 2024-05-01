@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC3043
 
 # MIT license (c) 2024 https://github.com/slowpeek
 # Homepage: https://github.com/slowpeek/mc-iso9660xl
@@ -55,6 +56,30 @@ awk_xorriso_unesc=$(cat <<'EOF'
 EOF
 )
 
+run_xorriso() {
+    local iso="$1"
+    shift
+
+    xorriso -report_about WARNING -dev stdio:"$iso" "$@"
+    local _st=$?
+
+    # Append "x" to protect any trailing empty lines from trimming by
+    # log=$(run_xorriso ..). The empty line of interest is the one produced by
+    # xorriso_main.c:yell_xorriso() when the header is the only content in
+    # stderr. The sed command in process_log() cant remove the header if the
+    # empty line is not there
+    echo x >&2
+    return "$_st"
+}
+
+process_log() {
+    # Remove the header produced by xorriso_main.c:yell_xorriso()
+    log=$(printf '%s' "$log" | sed -E '1{/xorriso .+ filesystem manipulator/{N;d}}')
+
+    # If there is anything left, pass it to mc (with the "x" protector removed)
+    [ "$log" = x ] || printf -- '%s' "$log" | head -n-1 | fmt -sw 70 >&2
+}
+
 command -v xorriso >/dev/null ||
     bye 'xorriso is not installed'
 
@@ -67,7 +92,11 @@ case "$cmd" in
         # shellcheck disable=SC2064
         trap "rm -f '${temp_ls}'" EXIT
 
-        xorriso -dev stdio:"$1" -find / -exec lsdl 2>/dev/null > "$temp_ls" || exit
+        log=$(run_xorriso "$1" -find / -exec lsdl 2>&1 >"$temp_ls")
+        _st=$?
+
+        process_log
+        [ "$_st" = 0 ] || exit "$_st"
 
         # The first line is /, skip it
         tail -n+2 "$temp_ls" |
@@ -79,8 +108,11 @@ case "$cmd" in
         exit ;;
 
     copyout)
-        xorriso -dev stdio:"$1" -osirrox on -extract "$2" "$3" >/dev/null
-        exit ;;
+        log=$(run_xorriso "$1" -osirrox on -extract "$2" "$3" 2>&1 >/dev/null)
+        _st=$?
+
+        process_log
+        exit "$_st" ;;
 
     *)
         exit 1 ;;
