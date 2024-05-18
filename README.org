@@ -9,9 +9,8 @@ This is a readonly [[https://www.gnu.org/software/xorriso/][GNU xorriso]] based 
 - the boot catalog file is visible
 - dirs have actual modified date shown, not the current date
 
-I [[https://github.com/MidnightCommander/mc/pull/196][PR]]-ed the essentials of the code to the mc repository. Aside for the readonly
-bit, all the improvements will likely make its way into the official plugin at
-some time.
+I [[https://github.com/MidnightCommander/mc/pull/196][PR]]-ed the essentials of the code to the mc repository and it got merged on [[https://github.com/MidnightCommander/mc/commit/49e2535c073b9eabf3396f22931441d3e4aa5908][May
+18, 2024]].
 
 * Installation
 
