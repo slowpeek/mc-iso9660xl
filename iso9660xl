@@ -74,7 +74,7 @@ run_xorriso() {
 
 process_log() {
     # Remove the header produced by xorriso_main.c:yell_xorriso()
-    log=$(printf '%s' "$log" | sed -E '1{/xorriso .+ filesystem manipulator/{N;d}}')
+    log=$(printf '%s' "$log" | sed -E '1{/xorriso .+ filesystem manipulator/{N;d;};}')
 
     # If there is anything left, pass it to mc (with the "x" protector removed)
     [ "$log" = x ] || printf -- '%s' "$log" | head -n-1 | fmt -sw 70 >&2
