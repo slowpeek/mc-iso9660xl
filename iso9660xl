@@ -77,7 +77,7 @@ process_log() {
     log=$(printf '%s' "$log" | sed -E '1{/xorriso .+ filesystem manipulator/{N;d;};}')
 
     # If there is anything left, pass it to mc (with the "x" protector removed)
-    [ "$log" = x ] || printf -- '%s' "$log" | head -n-1 | fmt -sw 70 >&2
+    [ "$log" = x ] || printf -- '%s' "$log" | sed '$d' | fold -s -w70 >&2
 }
 
 command -v xorriso >/dev/null ||
