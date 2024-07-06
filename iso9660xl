@@ -44,18 +44,18 @@ shift
 
 case "$cmd" in
     list)
-        temp_ls=$(mktemp "${MC_TMPDIR:-/tmp}"/mc-iso9660xl.XXXXXX) || exit
+        lsdl_out=$(mktemp "${MC_TMPDIR:-/tmp}"/mc-iso9660xl.XXXXXX) || exit
         # shellcheck disable=SC2064
-        trap "rm -f '${temp_ls}'" EXIT
+        trap "rm -f '${lsdl_out}'" EXIT
 
-        log=$(run_xorriso "$1" -find / -exec lsdl 2>&1 >"$temp_ls")
+        log=$(run_xorriso "$1" -find / -exec lsdl 2>&1 >"$lsdl_out")
         _st=$?
 
         process_log
         [ "$_st" = 0 ] || exit "$_st"
 
         # The first line is /, skip it
-        tail -n+2 "$temp_ls" |
+        tail -n+2 "$lsdl_out" |
             # disk_ops.c:Xorriso_format_ls_l() prints the boot catalog file as
             # of type "e". Make it a generic file
             sed -E 's,^e,-,' |
