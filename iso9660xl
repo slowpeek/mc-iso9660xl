@@ -52,7 +52,7 @@ case "$cmd" in
         trap "rm -f '${lsdl_out}'" EXIT
 
         log=$(run_xorriso "$1" -find / -exec lsdl 2>&1 >"$lsdl_out")
-        process_log $?
+        process_log "$?"
 
         # The first line is /, skip it
         tail -n+2 "$lsdl_out" |
@@ -64,7 +64,7 @@ case "$cmd" in
         ;;
     copyout)
         log=$(run_xorriso "$1" -osirrox on -extract "$2" "$3" 2>&1 >/dev/null)
-        process_log $?
+        process_log "$?"
         ;;
     *)
         exit 1
