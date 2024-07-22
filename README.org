@@ -1,3 +1,8 @@
+* Deprecation notice
+
+This repo is no longer updated. It has been merged into
+https://github.com/slowpeek/mc-extfs-sp
+
 * About
 
 This is a readonly [[https://www.gnu.org/software/xorriso/][GNU xorriso]] based ISO9660 [[https://github.com/MidnightCommander/mc/blob/master/src/vfs/extfs/helpers/README][plugin]] for Midnight Commander.
